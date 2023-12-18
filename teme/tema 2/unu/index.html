@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Image Slider</title>
+  <style>
+    #slider-container {
+      width: 60%;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    #slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slider-image {
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="slider-container">
+  <div id="slider">
+    <img class="slider-image" src="image1.jpg" alt="Image 1">
+    <img class="slider-image" src="image2.jpg" alt="Image 2">
+    <img class="slider-image" src="image3.jpg" alt="Image 3">
+  </div>
+</div>
+
+<button onclick="prevSlide()">Previous</button>
+<button onclick="nextSlide()">Next</button>
+<button onclick="startAutoSlide()">Start Auto Slide</button>
+<button onclick="stopAutoSlide()">Stop Auto Slide</button>
+
+<script>
+  let currentIndex = 0;
+  let intervalId;
+
+  function showSlide(index) {
+    const slides = document.querySelectorAll('.slider-image');
+    const totalSlides = slides.length;
+
+    if (index < 0) {
+      currentIndex = totalSlides - 1;
+    } else if (index >= totalSlides) {
+      currentIndex = 0;
+    } else {
+      currentIndex = index;
+    }
+
+    const transformValue = -currentIndex * 100 + '%';
+    document.getElementById('slider').style.transform = 'translateX(' + transformValue + ')';
+  }
+
+  function nextSlide() {
+    showSlide(currentIndex + 1);
+  }
+
+  function prevSlide() {
+    showSlide(currentIndex - 1);
+  }
+
+  function startAutoSlide() {
+    intervalId = setInterval(nextSlide, 1000);
+  }
+
+  function stopAutoSlide() {
+    clearInterval(intervalId);
+  }
+</script>
+
+</body>
+</html>

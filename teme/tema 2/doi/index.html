@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration and Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    form {
+      max-width: 300px;
+      margin: 20px auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #message {
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Registration Form -->
+<form id="registrationForm">
+  <label for="username">Username:</label>
+  <input type="text" id="regUsername" name="username" required>
+
+  <label for="password">Password:</label>
+  <input type="password" id="regPassword" name="password" required>
+
+  <label for="confirmPassword">Confirm Password:</label>
+  <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+  <button type="button" onclick="registerUser()">Register</button>
+
+  <p id="regMessage"></p>
+</form>
+
+<!-- Login Form -->
+<form id="loginForm">
+  <label for="loginUsername">Username:</label>
+  <input type="text" id="loginUsername" name="username" required>
+
+  <label for="loginPassword">Password:</label>
+  <input type="password" id="loginPassword" name="password" required>
+
+  <button type="button" onclick="loginUser()">Login</button>
+
+  <p id="loginMessage"></p>
+</form>
+
+<script>
+  function registerUser() {
+    const username = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Check password complexity
+    if (!isPasswordComplex(password)) {
+      document.getElementById('regMessage').innerText = 'Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.';
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      document.getElementById('regMessage').innerText = 'Passwords do not match.';
+      return;
+    }
+
+    // Check if the username is already taken
+    const users = getUsersFromStorage();
+    if (users.includes(username)) {
+      document.getElementById('regMessage').innerText = 'Username is already taken.';
+      return;
+    }
+
+    // Store the user in local storage (not secure for real-world applications)
+    users.push({ username, password });
+    localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+    // Reset form and display success message
+    document.getElementById('registrationForm').reset();
+    document.getElementById('regMessage').innerText = 'Registration successful!';
+  }
+
+  function loginUser() {
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // Check if the user exists and the password is correct
+    const users = getUsersFromStorage();
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+      document.getElementById('loginMessage').innerText = 'Login successful!';
+    } else {
+      document.getElementById('loginMessage').innerText = 'Invalid username or password.';
+    }
+  }
+
+  function getUsersFromStorage() {
+    const storedUsers = localStorage.getItem('registeredUsers');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  }
+
+  function isPasswordComplex(password) {
+    // Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return passwordRegex.test(password);
+  }
+</script>
+
+</body>
+</html>
